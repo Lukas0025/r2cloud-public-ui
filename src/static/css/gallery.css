@@ -1,0 +1,13 @@
+.card a {
+    height: 300px;
+    background: black;
+    position: relative;
+}
+
+.card a img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-height: 300px;
+}

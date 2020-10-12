@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div class="my-3 my-md-5">
+  <div class="container">
+     <div class="page-header">
+        <h1 class="page-title">
+           {{ main_title }}
+        </h1>
+     </div>
+     <div class="row row-cards row-deck">
+        <div class="col-md-6 col-lg-12">
+        </div>
+        <div class="col-12">
+           <div class="card">
+              <div class="card-header">
+                 <h3 class="card-title">Observations</h3>
+              </div>
+              <div class="table-responsive">
+                 <table class="table table-hover table-outline table-vcenter text-nowrap card-table">
+                    <thead>
+                       <tr>
+                          <th class="w-1">No.</th>
+                          <th>Satellite</th>
+                          <th>Date-Time</th>
+                          <th>Status</th>
+                       </tr>
+                    </thead>
+                    <tbody>
+                      {% for ob in obs %}
+                          <tr {% if ob['hasData'] != -1 %} onclick="window.location.href='/observation?ob={{ ob['id'] }}'"  {% endif %}
+                              {% if ob['hasData'] == 1 %}
+                                 style="background-color: #c3e6cb;"
+                              {% elif ob['hasData'] == -1 %}
+                                 style="background-color: #c3d3e6;"
+                              {% endif %}
+                           >
+                            <td>{{ ob['id'] }}</td>
+                            <td>{{ ob['name'] }}</td>
+                            <td>{{  datetime.fromtimestamp(ob['start']) }}</td>
+                            {% if ob['hasData'] == 1 %}
+                              <td>decoded</td>
+                            {% elif ob['hasData'] == -1 %}
+                              <td>planned</td>
+                            {% else %}
+                              <td>undecoded</td>
+                            {% endif %}
+                          </tr>
+                      {% endfor %}
+                    </tbody>
+                 </table>
+              </div>
+           </div>
+        </div>
+     </div>
+  </div>
+</div>
+{% endblock %}

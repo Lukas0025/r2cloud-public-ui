@@ -1,0 +1,150 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div class="my-3 my-md-5">
+  <div class="map-header">
+     <div id="map-track"></div>
+  </div>
+  <div class="container">
+     <div class="row row-cards">
+        <div class="col-lg-4 col-md-6">
+           <div class="card">
+              <div class="card-header">
+                 <h3 class="card-title">Observation metadata</h3>
+              </div>
+              <div class="card-body">
+                 <div class="media mb-5">
+                    <img class="d-flex mr-5 rounded" width="70px" src="{{ getSatIcon(ob['satellite']) }}">
+                    <div class="media-body">
+                       <h5>{{ ob['tle1'] }}</h5>
+                       <address class="text-muted small">
+                          id: {{ ob['id'] }}
+                       </address>
+                    </div>
+                 </div>
+                 <div class="row">
+                    <div class="col-6">
+                       <div class="h6">Start</div>
+                       <p id="start" value="{{ ob['start'] }}">{{  datetime.fromtimestamp(ob['start']) }}</p>
+                    </div>
+                    <div class="col-6">
+                       <div class="h6">End</div>
+                       <p id="end" value="{{ ob['end'] }}">{{  datetime.fromtimestamp(ob['end']) }}</p>
+                    </div>
+                    <div class="col-6">
+                       <div class="h6">Sample Rate</div>
+                       <p>{{ ob['sampleRate'] }}</p>
+                    </div>
+                    <div class="col-6">
+                       <div class="h6">Input Sample Rate</div>
+                       <p>{{ ob['inputSampleRate'] }}</p>
+                    </div>
+                    <div class="col-6">
+                      <div class="h6">Frequency</div>
+                      <p>{{ ob['frequency'] }}</p>
+                    </div>
+                    <div class="col-6">
+                      <div class="h6">Actual Frequency</div>
+                      <p>{{ ob['actualFrequency'] }}</p>
+                    </div>
+                    <div class="col-6">
+                       <div class="h6">Decoder</div>
+                       <p>{{ ob['decoder'] }}</p>
+                    </div>
+                    <div class="col-6">
+                       <div class="h6">Bandwidth</div>
+                       <p>{{ ob['bandwidth'] }}</p>
+                    </div>
+                    <div class="col-6">
+                      <div class="h6">Decoded Packets</div>
+                      <p>{{ ob['numberOfDecodedPackets'] }}</p>
+                    </div>
+                    <div class="col-6">
+                      <div class="h6">RAW Record</div>
+                      <p>
+                        {% if  path.isfile("static/raws/%s.wav" % ob['id']) %}
+                           <a href="static/raws/{{ ob['id'] }}.wav" download>Download</a>
+                        {% elif  path.isfile("static/raws/%s.raw.gz" % ob['id']) %}
+                           <a href="static/raws/{{ ob['id'] }}.raw.gz" download>Download</a>
+                        {% else %}
+                           unavailable
+                        {% endif %}
+                      </p>
+                    </div>
+                 </div>
+                 <div class="h6">TLE</div>
+                 <p class="text-muted small" id="tle" line2="{{ ob['tle2'] }}" line3="{{ ob['tle3'] }}">
+                 {{ ob['tle2'] }}<br>{{ ob['tle3'] }}
+                 </p>
+              </div>
+           </div>
+        </div>
+
+        <div class="col-lg-8 col-md-6">
+
+           {{ pluginsHtml|safe }}
+
+           {% if  path.isfile("static/a/%s.jpg" % ob['id']) %}
+           <div class="card">
+              <div class="card-header">
+                 <h3 class="card-title">Decoded image</h3>
+              </div>
+              <div class="card-body">
+                  <img src="static/a/{{ ob['id'] }}.jpg">
+              </div>
+           </div>
+           {% endif %}
+
+           {% if  path.isfile("static/spectrograms/%s.png" % ob['id']) %}
+           <div class="card">
+              <div class="card-header">
+                 <h3 class="card-title">Spectrogram</h3>
+              </div>
+              <div class="card-body">
+                  <img src="static/spectrograms/{{ ob['id'] }}.png">
+              </div>
+           </div>
+           {% endif %}
+
+           {% if  ob['dataEntity'] != None %}
+           <div class="card">
+              <div class="card-header">
+                 <h3 class="card-title">Decoded data</h3>
+              </div>
+              <div class="card-body" id="jsonView">
+              </div>
+
+               <div id="dataEntity" style="display: none">
+                  {{ ob['dataEntity'] }}
+               </div>
+               <script>
+                  $('#jsonView').jsonViewer(
+                     JSON.parse(
+                        $('#dataEntity').text()
+                     ),
+                     {collapsed: true, withQuotes: true, withLinks: true}
+                  );
+               </script>
+
+           </div>
+           {% endif %}
+
+        </div>
+     </div>
+  </div>
+</div>
+
+<script>
+   var map   = createMap("map-track");
+  
+   var track = getGroundTrackOfTle(
+      loadTle("tle"),
+      Number(document.getElementById("start").getAttribute("value")),
+      Number(document.getElementById("end").getAttribute("value"))
+   )
+
+   addSatelliteTrack(map, track);
+   addGroundStation(map, {{ setting.groundStations[ob['groundStation']]['lat'] }}, {{ setting.groundStations[ob['groundStation']]['lon'] }});
+</script>
+
+{% endblock %}
