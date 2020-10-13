@@ -8,7 +8,7 @@ Unofficial website ui for r2clouds servers. Designed to display your recorded da
 ```sh
 docker run -d \
   --name=r2cloud-public-ui \
-  -v setting.py:/r2cloud_public_ui/setting.py:ro \
+  -mount type=bind,source="$(pwd)/setting.py",target="/r2cloud_public_ui/setting.py" \
   -p 5000:5000 \
   lukasplevac/r2cloud-public-ui
 ```
