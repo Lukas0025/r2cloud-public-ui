@@ -2,7 +2,7 @@
 Unofficial website ui for r2clouds servers. Designed to display your recorded data to the public. It accesses the date via the API and allows data to be collected from multiple stations
 
 ## Setup using docker
-* create own setting file (`setting.py`), exemple you can found in `setting-exmaple.py`
+* create own setting file (`setting.py`), example you can found in `setting-exmaple.py`
 * run docker container with command 
 
 ```sh
@@ -14,6 +14,15 @@ docker run -d \
 ```
 
 ### Advence docker
+
+#### Build own image
+```sh
+docker build . -t lukasplevac/r2cloud-public-ui
+```
+or
+```sh
+make build
+```
 
 ####  volumes
 * `/r2cloud_public_ui/setting.py:ro          `- setting file
@@ -30,5 +39,5 @@ docker run -d \
 ## Setup without docker
 * install `python3` and `python3-pip` - `apt install python3 python3-pip`
 * from `pip3` install `r2cloud`, `Flask` and `requests` - `pip3 install Flask && pip3 install r2cloud && pip3 install requests`
-* create own setting file (`setting.py`), exemple you can found in `setting-exmaple.py`
-* run app using `env FLASK_APP=root.py flask run`
+* create own setting file (`setting.py`), example you can found in `setting-exmaple.py`
+* run app using `env FLASK_APP=root.py flask run` in `src` dir
