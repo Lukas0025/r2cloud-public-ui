@@ -285,7 +285,7 @@ class db():
 
     def clearSchedulePass(self, id):
         self.open(True)
-        self.curs.execute('UPDATE schedule SET passStart = NULL, passEnd = NULL WHERE id = ?', (id))
+        self.curs.execute('UPDATE schedule SET passStart = NULL, passEnd = NULL WHERE id = ?', (id,))
         self.close(True)     
 
     def updateSchedulePass(self, id, newPass):
